@@ -101,7 +101,6 @@ App({
   globalData: {
     userInfo: null,
   },
-  host: "http://192.168.2.79:5000/",
   session: null,
   scene: null
 })

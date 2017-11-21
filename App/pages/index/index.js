@@ -1,5 +1,3 @@
-//index.js
-//获取应用实例
 const api = require("../../utils/api.js");
 const app = getApp()
 const sliderWidth = 100;
@@ -15,12 +13,7 @@ Page({
   },
   onLoad(options) {
     const self = this;
-    wx.showToast({
-      title: '正在加载',
-      icon: 'loading',
-      duration: 10000,
-    });
-
+    console.log(app.session)
     wx.getSystemInfo({
       success(res) {
         self.setData({
@@ -33,20 +26,16 @@ Page({
       key: 'session',
       success(res) {
         console.log(res.data)
-        wx.request({
-          url: `${app.host}vote-list/`,
-          data: { 'wxapp_session': res.data },
-          method: 'POST',
-          header: {
-            'content-type': 'application/x-www-form-urlencoded' // 默认值
-          },
+        const data = res.data;
+        api.getVoteList({
+          data,
           success(res) {
             console.log('test------')
             console.log(app.session)
             console.log(res)
-            self.setData({vote_list: res.data})
+            self.setData({ vote_list: res.data })
           },
-          fail:() => {
+          fail: () => {
             console.log("获取列表失败！")
           }
         })
@@ -61,13 +50,9 @@ Page({
         });
 
         setTimeout(function () {
-          wx.request({
-            url: `${app.host}vote-list/`,
-            data: { 'wxapp_session': wx.getStorageSync('session')},
-            method: 'POST',
-            header: {
-              'content-type': 'application/x-www-form-urlencoded' // 默认值
-            },
+          const data = wx.getStorageSync('session');
+          api.getVoteList({
+            data,
             success(res) {
               console.log('test------timeout')
               console.log(app.session)
@@ -78,7 +63,6 @@ Page({
         }, 1000);
       }
     })
-    wx.hideToast();
   },
   onReady: function(){
 

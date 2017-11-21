@@ -45,18 +45,7 @@ const getVoteInfo = (params) => {
 const getResult = (params) => {
   wxRequest(params, `${apiURL}/result/`);
 };
-// const getUsers = (params) => {
-//   wxRequest(params, `${apiURL}/users`);
-// };
-// const getUserInfoById = (params) => {
-//   wxRequest({ success: params.success }, `${apiURL}/user/${params.data.userId}`);
-// };
-// const getHotByWeekly = (params) => {
-//   wxRequest(params, `${apiURL}/hot/weekly`);
-// };
-// const getHotByMonthly = (params) => {
-//   wxRequest(params, `${apiURL}/hot/monthly`);
-// };
+
 
 module.exports = {
   create,
@@ -64,10 +53,4 @@ module.exports = {
   getVoteList,
   voteSubmit,
   getVoteInfo,
-  // getTopicByName,
-  // getUsers,
-  // getUserInfoById,
-  // getHotByWeekly,
-  // getHotByMonthly,
-  // getLiveInfoById
 };

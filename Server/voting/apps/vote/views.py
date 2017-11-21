@@ -122,8 +122,8 @@ def get_session_key(code):
 
 @csrf_exempt
 def vote_list(request):
-    import time
-    time.sleep(2)
+    # import time
+    # time.sleep(2)
     # wxapp_session = request.POST.get('wxapp_session')
     openid = 'oKnMg0TSolZySEy1bbg9jq1ct6UU'
     # initiators = Initiator.objects.filter(wxapp_session=wxapp_session)
@@ -157,7 +157,6 @@ def result(request):
 
 @csrf_exempt
 def get_vote_info(request):
-    # import ipdb; ipdb.set_trace()
     pk = request.POST.get('pk', '')
     subject = Subject.objects.get(pk=pk)
     data = subject.to_dict()
@@ -177,7 +176,7 @@ def vote_submit(request):
 
 @csrf_exempt
 def create(request):
-    import ipdb; ipdb.set_trace()
+    # import ipdb; ipdb.set_trace()
     subject_form = SubjectForm()
     choice_formset = ChioceFormSet()
     wxapp_session = request.META.get('HTTP_SESSION')
