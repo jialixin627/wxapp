@@ -1,0 +1,45 @@
+<view class="page">
+    <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__bd">
+            <view  class="weui-media-box weui-media-box_appmsg">
+                <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                    <image class="weui-media-box__thumb user-face" src="{{result.avatarurl}}" />
+                </view>
+                <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                    <view class="weui-media-box__title">{{result.name}}</view>
+                    <view class="weui-media-box__desc">一分钟前</view>
+                </view>
+            </view>
+        </view>
+    </view>
+    
+    <view class="weui-panel weui-panel_access">
+        <view class="weui-panel__bd">
+             <view class="weui-media-box weui-media-box_text">
+                <view class="weui-media-box__title weui-media-box__title_in-text">{{result.question}}</view>
+                <view class="weui-media-box__desc">
+                    <image src="{{detailImg}}"></image>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <view class="weui-panel weui-panel_access" style="padding-bottom:20px;" wx:for="{{result.choices_data}}">
+              <view class="weui-form-preview__bd">
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">{{item.choice_text}}({{item.votes}}票)</view>
+                    <view class="weui-form-preview__value">{{item.proportion}}%</view>
+                </view>
+              </view>
+        <view class="weui-panel__bd">
+             <view class="weui-progress">
+                <view class="weui-progress__bar">
+                    <progress percent="{{item.proportion}}" stroke-width="5" />
+                </view>
+            </view>
+        </view>
+    </view>
+     <view class="weui-btn-area">
+        <button class="weui-btn" type="primary" open-type="share" data-pk='{{result.pk}}' data-title='{{result.question}}'>分享到群里</button>
+    </view> 
+</view>

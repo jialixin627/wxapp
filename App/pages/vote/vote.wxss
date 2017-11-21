@@ -1,0 +1,9 @@
+/* pages/vote/vote.wxss */
+.title {
+  text-align: center;
+  padding-top: 20px;
+}
+
+.hide {
+  display: none;
+}

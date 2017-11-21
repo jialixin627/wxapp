@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet">
+  <div class="row center">
+    <div class="col-md-10 col-md-offset-1">
+      <h2>创建投票</h2>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row center" style="padding-top: 20px;">
+        <form action="." method="post" class="form-horizontal">
+          <!-- {% csrf_token %} -->
+          {{ choice_formset.management_form }}
+          <div class="form-group">
+              <label for="id_question" class="col-sm-2 control-label">投票主题: </label>
+              <div class="col-sm-4">
+                <input type="text" id="id_question" name="question" class="form-control" placeholder="投票主题">
+              </div>
+          </div>
+          <div class="form-group">
+            <label for="id_subtitle" class="col-sm-2 control-label">补充内容: </label>
+            <div class="col-sm-4">
+              <textarea class="form-control" name="subtitle" id="id_subtitle" maxlength="512" rows="3" placeholder="选填"></textarea>
+            </div>
+          </div>
+          <div class="form-group date form-date">
+            <label for="id_deadline" class="col-sm-2 control-label">截止日期: </label>
+            <div class="input-group date form_datetime col-sm-4" data-date="{% now 'Y-m-d'%}" data-date-format="yyyy-mm-dd - hh:ii" data-link-field="id_deadline">
+              <input class="form-control" size="16" type="text" value="">
+              <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+              <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+            </div>
+              <input type="hidden" name="deadline" id="id_deadline" value="" /><br/>
+          </div>
+
+          <div class="choice-content">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">选项 1 : </label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="choice_set-0-choice_text" id="id_choice_set-0-choice_text" maxlength="256">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label">选项 2 : </label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="choice_set-1-choice_text" id="id_choice_set-1-choice_text" maxlength="256">
+              </div>
+            </div>
+            <div class="add-position">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="btn-add-position">
+              <a href="javascript:;" id="add-choice" class="btn btn-default btn-add"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-5">
+            <button type="submit" class="btn btn-success">确认发布</button>
+          </div>
+        </div>
+        </form>
+  </div>
+
+{% endblock %}
+
+{% block script%}
+<script type="text/javascript">
+  $(document).on('click', '#add-choice', function() {
+     var input_count = $('.choice-content input[type=text]').length;
+     var count = Number(input_count) + 1
+     var $input_item = $(this).parents('.choice-content');
+     if (!$input_item.next().length) {
+        $('.add-position').append('<div class="form-group"><label class="col-sm-2 control-label">选项 '+count+' : </label><div class="col-sm-4"><input type="text" class="form-control" name="choice_set-'+ input_count +'-choice_text" id="id_choice_set-'+ input_count +'-choice_text" maxlength="256"></div><div class="col-sm-1"><a href="javascript:;" class="control-label" id="remove-input"><i class="fa fa-times remove" aria-hidden="true"></i></a></div></div>')
+     }
+  });
+
+  $(document).on('click', '#remove-input', function(){
+    $(this).parents('.form-group').remove();
+    // debugger;
+    var default_count = 2
+    var count = 3
+    $('.add-position .form-group').each(function(){
+        $(this).find('label').html('选项 ' + count + ' :' );
+        $(this).find('input[type=text]').attr({'id': 'id_invoiceattach_set-'+default_count+'-invoice_attach', 'name': 'invoiceattach_set-'+default_count+'-invoice_attach'});
+        default_count += 1;
+        count += 1;
+    });
+  });
+  $(document).on('click', '.btn-success', function(){
+    $('#id_choice_set-TOTAL_FORMS').val($('.choice-content .form-group').length);
+    $('form').submit();
+  })
+
+</script>
+<script src="{% static 'js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.zh-CN.js'%}" charset="UTF-8"></script>
+<script type="text/javascript">
+      $('.form_datetime').datetimepicker({
+          locale: 'zh-cn',
+          // format:"YYY-MM-DD hh:mm:ss",
+          weekStart: 1,
+          todayBtn:  1,
+          autoclose: 1,
+          todayHighlight: 1,
+          startView: 2,
+          forceParse: 0,
+          showMeridian: 1
+      });
+</script>
+<style type="text/css">
+  .btn-add:hover {
+    min-width: 150px;
+    color: #2196F3;
+    border-color: #03A9F4;
+  }
+  .btn-add {
+    min-width: 150px;
+  }
+
+  .btn-add-position {
+    padding-right: 33%;
+  }
+
+  .remove {
+    color: red;
+    margin-top: 12px
+  }
+
+  .input-group {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+    float: left !important;
+  }
+  form {
+    padding-left: 25%;
+  }
+</style>
+{% endblock %}

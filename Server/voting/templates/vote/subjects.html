@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <div class="row center">
+    <div class="col-md-10 col-md-offset-1">
+      <h2>创建记录</h2>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row center table-body">
+    <div class="col-md-10 col-md-offset-1">
+        <table class="table table-bordered">
+            <thead>
+                <th width="30%">投票主题</th>
+                <th width="20%">创建时间</th>
+                <th width="20%">截止时间</th>
+                <th width="15%">进入投票</th>
+                <th width="15%">操作</th>
+            </thead>
+
+             <tbody>
+                {% for subject in subjects %}
+                 <tr>
+                     <td>{{ subject.question }}</td>
+                     <td>{{ subject.pub_date }}</td>
+                     <td>{{ subject.deadline }}</td>
+                     <td><a href="{% url 'vote-page' subject.id %}" target="_blank">进入投票</a></td>
+                     <td><a href="{% url 'voting-result' subject.id %}" target="_blank">查看结果</a></td>
+                 </tr>
+                 {% empty %}
+                    <tr>
+                        <td>目前没有记录</td>
+                    </tr>
+                 {% endfor %}
+             </tbody>
+        </table>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+<style type="text/css">
+    th {
+        text-align: center;
+    }
+    .table-body {
+        padding-top: 45px;
+    }
+</style>
+{% endblock %}

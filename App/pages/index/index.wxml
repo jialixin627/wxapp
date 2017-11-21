@@ -1,0 +1,51 @@
+<view class="page">
+    <view class="page__bd">
+        <view class="weui-tab">
+            <view class="weui-navbar">
+                <block wx:for="{{tabs}}" wx:key="*this">
+                    <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+                        <view class="weui-navbar__title">{{item}}</view>
+                    </view>
+                </block>
+                <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+            </view>
+            <view class="weui-tab__panel">
+                <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+                    <view class="weui-panel">
+                      <block wx:for="{{vote_list.i}}">
+                        <view class="weui-panel__bd" bindtap='redirectTo' data-pk='{{item.pk}}'>
+                            <view class="weui-media-box weui-media-box_text">
+                                <view class="weui-media-box__title weui-media-box__title_in-text">{{item.question}}</view>
+                                <view class="weui-media-box__desc">{{item.subtitle}}</view>
+                                <view class="weui-media-box__info">
+                                    <view class="weui-media-box__info__meta">截至时间：{{item.deadline}}</view>
+                                    <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">票数：{{item.total_votes}}</view>
+                                </view>
+                            </view>
+                        </view>
+                        <view class='line'></view>
+                        </block>
+                    </view>
+                </view>
+                <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+                    <view class="weui-panel">
+                        <block wx:for="{{vote_list.p}}">
+                        <view class="weui-panel__bd" bindtap='redirectTo' data-pk='{{item.pk}}'>
+                            <view class="weui-media-box weui-media-box_text">
+                                <view class="weui-media-box__title weui-media-box__title_in-text">{{item.question}}</view>
+                                <view class="weui-media-box__desc">{{item.subtitle}}</view>
+                                <view class="weui-media-box__info">
+                                    <view class="weui-media-box__info__meta">{{item.nickname}}</view> 
+                                    <view class="weui-media-box__info__meta">截至时间：{{item.deadline}}</view>
+                                    <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">发起人：{{item.name}}</view>
+                                </view>
+                            </view>
+                        </view>
+                        <view class='line'></view> 
+                      </block>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

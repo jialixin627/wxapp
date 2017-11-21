@@ -1,0 +1,25 @@
+<view class="page">
+    <view class="page__hd">
+      <view class="page__title">{{voteInfo.question}}</view>
+      <view class="page__desc">{{voteInfo.subtitle}}</view>
+    </view>
+    <form bindsubmit="formSubmit">
+      <view class="page__bd"> 
+          <view class="weui-cells weui-cells_after-title">
+              <radio-group bindchange="radioChange">
+                  <label class="weui-cell weui-check__label" wx:for="{{radioItems}}">
+                      <radio class="weui-check" value="{{item.pk}}" checked="{{item.checked}}"></radio>
+                      <view class="weui-cell__bd">{{item.choice_text}}</view>
+                      <view class="weui-cell__ft weui-cell__ft_in-radio" wx:if="{{item.checked}}">
+                          <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+                          <input class='hide' name='pk' value='{{item.pk}}' />
+                      </view>
+                  </label>
+              </radio-group>              
+          </view> 
+          <view class="weui-btn-area">
+            <button class="weui-btn" type="primary" formType="submit">投票</button>
+          </view>
+      </view>
+    </form>
+</view>

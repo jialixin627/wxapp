@@ -1,0 +1,20 @@
+body {
+  background-color: #f0f0f0
+}
+
+.center {
+  text-align: center;
+}
+
+
+hr {
+  margin: 0px;
+  background: #03A9F4;
+  height: 1px;
+  border: none;
+  display: flex;
+}
+
+/*.form-horizontal .form-group {
+  padding-left: 25%;
+}*/

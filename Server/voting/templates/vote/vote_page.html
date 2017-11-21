@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title%}
+  <div class="row center">
+    <div class="col-md-10 col-md-offset-1">
+      <h2>投票箱：（本次为 单选/实名 投票）</h2>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+    <div class="row center">
+        <div class="col-md-10 col-md-offset-1">
+            <h3>{{ subject.question }}</h3>
+        </div>
+    </div>
+    <form class="form-horizontal" action="." method="post">
+        {% csrf_token %}
+    <ul id="id_choice">
+        {% for choice in subject.choice_set.all %}
+            <li>
+                <div class="row center">
+                  <div class="col-md-4 col-md-offset-4">
+                    <div class="input-group">
+                      <span class="input-group-addon">
+                        <input type="radio" name="choice" value="{{choice.id}}" id="id_choice_{{forloop.counter}}">
+                      </span>
+                      <label class="form-control" for="id_choice_{{forloop.counter}}">{{ choice.choice_text }}</label>
+                    </div>
+                  </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="form-group">
+      <!-- <div class="col-sm-5"> -->
+        <button type="submit" class="btn btn-success">提 交</button>
+      <!-- </div> -->
+    </div>
+</form>
+{% endblock %}
+         <div class="col-lg-6">
+            <div class="input-group">
+              <span class="input-group-addon">
+                <input type="checkbox" aria-label="...">
+              </span>
+              <input type="text" class="form-control" aria-label="...">
+            </div><!-- /input-group -->
+          </div><!-- /.col-lg-6 -->
+
+{% block script%}
+<style type="text/css">
+    li {
+        padding-top: 10px;
+    }
+    #id_choice {
+        list-style-type: none;
+    }
+    .form-horizontal .form-group {
+      margin-left: 50%;
+    }
+</style>
+{% endblock %}
