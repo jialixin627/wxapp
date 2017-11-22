@@ -1,4 +1,6 @@
-const apiURL = "http://192.168.2.79:5000";
+// const apiURL = "http://192.168.2.79:5000";
+const apiURL = "http://192.168.31.109:5000";
+const token = wx.getStorageSync('token');
 
 const wxRequest = (params, url) => {
   wx.request({
@@ -6,7 +8,7 @@ const wxRequest = (params, url) => {
     method: params.method || 'POST',
     data: params.data || {},
     header: {
-      // Accept: 'application/json',
+      'Authorization': `JWT ${token}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     success(res) {
@@ -27,6 +29,9 @@ const wxRequest = (params, url) => {
   });
 };
 
+const signIn = (params) => {
+  wxRequest(params, `${apiURL}/login/`);
+};
 const create = (params) => {
   wxRequest(params, `${apiURL}/create/`);
 };
@@ -48,6 +53,7 @@ const getResult = (params) => {
 
 
 module.exports = {
+  signIn,
   create,
   getResult,
   getVoteList,

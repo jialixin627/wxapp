@@ -10,7 +10,7 @@ from voting.apps.vote.models import Subject, Choice, Initiator, Participant
 from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
-from .WXBizDataCrypt import WXBizDataCrypt
+from .WXApp import WXApp
 from django.core import serializers
 from .utils import format_datetime
 
@@ -46,7 +46,7 @@ def subjects(request):
 
 def voting_result(request, id):
     subject = get_object_or_404(Subject, id=id)
-    choices = Choice.objects.filter(subject=subject).order_by('-votes')
+    choices = subject.choice_set.all().order_by('-votes')
     return render(request, 'vote/subject_result.html', {'subject': subject, 'choices': choices})
 
 
@@ -65,32 +65,46 @@ def vote_page(request, id):
     return render(request, 'vote/vote_page.html', {'subject': subject, 'vote_form': vote_form})
 
 
+from .decorators import marshal_with
+
+
 @csrf_exempt
+@marshal_with(is_login=True)
 def login(request):
     if request.method == "POST":
         code = request.POST.get('code', '')
-        nickname = request.POST.get('nickname', '')
-        avatarurl = request.POST.get('avatarUrl', '')
-        status, openid, session = get_session_key(code)
-        if status:
-            wxapp_session = ''.join(random.sample(initial_code*2, 64))
-            # cache.add(wxapp_session, openid, 2*60*60)
-            initiator = Initiator.objects.filter(openid=openid)
+        encryptedData = request.POST.get('encryptedData', '')
+        iv = request.POST.get('iv', '')
+        wxapp = WXApp(code, encryptedData, iv)
 
-            if initiator.exists():
-                initiator = initiator.first()
-                initiator.openid = openid
-                initiator.wxapp_session = wxapp_session
-                initiator.session = session
-                initiator.nickname = nickname
-                initiator.avatarurl = avatarurl
-                initiator.save()
-            else:
-                Initiator.objects.create(openid=openid, wxapp_session=wxapp_session, session=session, nickname=nickname, avatarurl=avatarurl)
+        return wxapp.decrypt()
 
-            data = json.dumps({'wxapp_session': wxapp_session, 'status': '登陆成功！'})
+# @csrf_exempt
+# def login(request):
+#     if request.method == "POST":
+#         code = request.POST.get('code', '')
+#         nickname = request.POST.get('nickname', '')
+#         avatarurl = request.POST.get('avatarUrl', '')
+#         status, openid, session = get_session_key(code)
+#         if status:
+#             wxapp_session = ''.join(random.sample(initial_code*2, 64))
+#             # cache.add(wxapp_session, openid, 2*60*60)
+#             initiator = Initiator.objects.filter(openid=openid)
 
-            return HttpResponse(data, content_type="application/json")
+#             if initiator.exists():
+#                 initiator = initiator.first()
+#                 initiator.openid = openid
+#                 initiator.wxapp_session = wxapp_session
+#                 initiator.session = session
+#                 initiator.nickname = nickname
+#                 initiator.avatarurl = avatarurl
+#                 initiator.save()
+#             else:
+#                 Initiator.objects.create(openid=openid, wxapp_session=wxapp_session, session=session, nickname=nickname, avatarurl=avatarurl)
+
+#             data = json.dumps({'wxapp_session': wxapp_session, 'status': '登陆成功！'})
+
+#             return HttpResponse(data, content_type="application/json")
             # else:
             #     encryptedData = request.POST.get('encryptedData', '')
             #     iv = request.POST.get('iv', '')
@@ -105,42 +119,23 @@ def login(request):
     #     wxapp_session = request.GET.get('wxapp_session', '')
     #     return HttpResponse({'status': '登陆成功！'}, content_type="application/json")
 
-
-def get_session_key(code):
-    api_url = url.format(appid=APPID, secret=SECRET, code=code)
-    res = requests.post(api_url).content
-    data = json.loads(res)
-    openid = data.get('openid', '')
-    session = data.get('session_key', '')
-    if openid and session:
-        return True, openid, session
-    else:
-        return False, None, None
-        #log
-        #{"errcode":40029,"errmsg":"invalid code, hints: [ req_id: ok1.rA0172th40 ]"}
-
-
 @csrf_exempt
+@marshal_with(is_login=False)
 def vote_list(request):
-    # import time
-    # time.sleep(2)
-    # wxapp_session = request.POST.get('wxapp_session')
+    return Subject.objects.all()
     openid = 'oKnMg0TSolZySEy1bbg9jq1ct6UU'
-    # initiators = Initiator.objects.filter(wxapp_session=wxapp_session)
-    # participants = Participant.objects.filter(wxapp_session=wxapp_session)
     initiators = Initiator.objects.filter(openid=openid)
     participants = Participant.objects.filter(openid=openid)
-    if initiators.exists():
-        initiator = initiators.first()
-        i_subjects = Subject.objects.filter(initiator=initiator)
-        i_data = [ s.get_subject_info() for s in i_subjects ]
+    initiator = initiators.first()
+    i_subjects = Subject.objects.filter(initiator=initiator)
+    i_data = [ s.get_subject_info() for s in i_subjects ]
 
-    if participants.exists():
-        participant = participants.first()
-        choices = Choice.objects.filter(participant=participant)
-        p_subjects = Subject.objects.filter(choice__in=choices)
 
-        p_data = [ s.get_subject_info() for s in p_subjects ]
+    participant = participants.first()
+    choices = Choice.objects.filter(participant=participant)
+    p_subjects = Subject.objects.filter(choice__in=choices)
+
+    p_data = [ s.get_subject_info() for s in p_subjects ]
 
     data = {'i': i_data, 'p': p_data}
     data = json.dumps(data)

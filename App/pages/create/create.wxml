@@ -53,7 +53,7 @@
                     <view class="weui-label">结束日期</view>
                 </view>
                 <view class="weui-cell__bd">
-                   <picker mode="date" name="deadline_date" value="{{date}}" start="2017-09-01" end="2027-09-01" bindchange="bindDateChange">
+                   <picker mode="date" name="deadline_date" value="{{date}}" start="2017-11-01" end="2027-11-01" bindchange="bindDateChange">
                         <view class="weui-select weui-select_in-select-after">{{date}}</view>
                     </picker>
                 </view>

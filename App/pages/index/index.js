@@ -1,4 +1,7 @@
 const api = require("../../utils/api.js");
+const util = require('../../utils/util.js');
+
+const formatTime = util.formatTime;
 const app = getApp()
 const sliderWidth = 100;
 Page({
@@ -13,7 +16,6 @@ Page({
   },
   onLoad(options) {
     const self = this;
-    console.log(app.session)
     wx.getSystemInfo({
       success(res) {
         self.setData({
@@ -22,45 +24,15 @@ Page({
         });
       }
     });
-    wx.getStorage({
-      key: 'session',
-      success(res) {
-        console.log(res.data)
-        const data = res.data;
-        api.getVoteList({
-          data,
-          success(res) {
-            console.log('test------')
-            console.log(app.session)
-            console.log(res)
-            self.setData({ vote_list: res.data })
-          },
-          fail: () => {
-            console.log("获取列表失败！")
-          }
-        })
-      },
-      fail: function() {
-        app.getUserInfo(function (userInfo) {
-          console.log('登陆成功-----')
-          console.log(userInfo)
-          self.setData({
-            userInfo: userInfo,
-          })
-        });
 
-        setTimeout(function () {
-          const data = wx.getStorageSync('session');
-          api.getVoteList({
-            data,
-            success(res) {
-              console.log('test------timeout')
-              console.log(app.session)
-              console.log(res)
-              self.setData({ vote_list: res.data })
-            }
-          })
-        }, 1000);
+    api.getVoteList({
+      success(res) {
+        console.log('test------')
+        console.log(res.data)
+        self.setData({ vote_list: res.data })
+      },
+      fail() {
+        console.log("获取列表失败！")
       }
     })
   },

@@ -1,4 +1,3 @@
-// pages/vote/vote.js
 const api = require("../../utils/api.js");
 const app = getApp()
 Page({
@@ -6,8 +5,9 @@ Page({
   voteInfo: {},
   radioItems: [],
   onLoad: function (data) {
-    var self = this
-    console.log(data)
+    var self = this;
+    console.log(data);
+    var data = {'pk': 2};
     api.getVoteInfo({
       data,
       success(res) {
@@ -37,14 +37,14 @@ Page({
   },
   formSubmit (e) {
     console.log('form发生了submit事件，携带数据为：', e.detail.value)
-    var formData = e.detail.value;
+    var data = e.detail.value;
     api.voteSubmit({
-      formData,
+      data,
       success: function (res) {
         console.log(res)
         if (res.data.status == 200) {
           wx.redirectTo({
-            url: "../detail/detail?pk=" + res.data.pk,
+            url: `../detail/detail?pk=${res.data.pk}`,
           })
         }
       }

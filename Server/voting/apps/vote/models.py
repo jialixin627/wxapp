@@ -9,10 +9,11 @@ from .utils import format_datetime
 
 class Initiator(models.Model):
     openid = models.CharField(max_length=128, unique=True)
-    session = models.CharField(max_length=255, unique=True)
-    wxapp_session = models.CharField(max_length=255, unique=True)
+    # session_key = models.CharField(max_length=255, unique=True)
+    # wxapp_session = models.CharField(max_length=255, unique=True)
     nickname = models.CharField(max_length=56, default='')
     avatarurl = models.CharField(max_length=128, default='')
+    login_time = models.IntegerField(default=0)
     rename = models.CharField(max_length=56, default='', blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

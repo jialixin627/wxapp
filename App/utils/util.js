@@ -4,9 +4,9 @@ const formatTime = date => {
   const day = date.getDate()
   const hour = date.getHours()
   const minute = date.getMinutes()
-  const second = date.getSeconds()
+  // const second = date.getSeconds()
 
-  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute, second].map(formatNumber).join(':')
+  return [year, month, day].map(formatNumber).join('/') + ' ' + [hour, minute].map(formatNumber).join(':')
 }
 
 const formatNumber = n => {
@@ -14,6 +14,13 @@ const formatNumber = n => {
   return n[1] ? n : '0' + n
 }
 
+const addHours = (date, hours) => {
+  date.setHours(date.getHours() + hours);
+  let d = formatTime(date).split(' ')
+  return d;
+}
+
 module.exports = {
-  formatTime: formatTime
+  formatTime: formatTime,
+  addHours: addHours
 }

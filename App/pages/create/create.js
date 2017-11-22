@@ -1,6 +1,9 @@
 const api = require("../../utils/api.js");
+const util = require('../../utils/util.js');
+
+const addHours = util.addHours;
 const app = getApp()
-const date = new Date();
+
 Page({
   data: {
     optionList: [
@@ -8,8 +11,8 @@ Page({
       { icon: '' }
     ],
     showAddBtn: 1,
-    date: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
-    time: `${date.getHours()+2}:${date.getMinutes()}`,
+    date: addHours(new Date(), 4)[0],
+    time: addHours(new Date(), 4)[1],
     voteType: ['单选'],
     // voteType: ['单选', '多选，最多2项', '多选，无限制'],
     voteTypeIndex: 0,
@@ -23,7 +26,7 @@ Page({
     _optionList.map(function (obj, i) {
       if (i === 0){
         _voteType.push('单选');
-      }else {
+      } else {
         _voteType.push('多选，最多'+ (i + 1) +'项');
       }
       console.log(i)
@@ -122,22 +125,5 @@ Page({
         }
       }
     })
-    // wx.request({
-    //   url: `${app.host}create/`,
-    //   data: formData,
-    //   method: "POST",
-    //   header: {
-    //     'content-type': 'application/x-www-form-urlencoded', // 默认值
-    //     'session': wx.getStorageSync('wxapp_session')
-    //   },
-    //   success: function (res) {
-    //     console.log(res)
-    //     if (res.data.status==200) {
-    //       wx.redirectTo({
-    //         url: `../publish/publish?pk=${res.data.pk}`,
-    //       })
-    //     }
-    //   }
-    // })
   }
 });
