@@ -12,7 +12,7 @@
             <view class="weui-tab__panel">
                 <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
                     <view class="weui-panel">
-                      <block wx:for="{{vote_list.i}}">
+                      <block wx:for="{{vote_list}}">
                         <view class="weui-panel__bd" bindtap='redirectTo' data-pk='{{item.pk}}'>
                             <view class="weui-media-box weui-media-box_text">
                                 <view class="weui-media-box__title weui-media-box__title_in-text">{{item.question}}</view>
@@ -29,7 +29,7 @@
                 </view>
                 <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
                     <view class="weui-panel">
-                        <block wx:for="{{vote_list.p}}">
+                        <block wx:for="{{join_list}}">
                         <view class="weui-panel__bd" bindtap='redirectTo' data-pk='{{item.pk}}'>
                             <view class="weui-media-box weui-media-box_text">
                                 <view class="weui-media-box__title weui-media-box__title_in-text">{{item.question}}</view>

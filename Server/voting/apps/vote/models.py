@@ -9,8 +9,6 @@ from .utils import format_datetime
 
 class Initiator(models.Model):
     openid = models.CharField(max_length=128, unique=True)
-    # session_key = models.CharField(max_length=255, unique=True)
-    # wxapp_session = models.CharField(max_length=255, unique=True)
     nickname = models.CharField(max_length=56, default='')
     avatarurl = models.CharField(max_length=128, default='')
     login_time = models.IntegerField(default=0)
@@ -77,14 +75,9 @@ class Choice(models.Model):
     def __unicode__(self):
         return self.choice_text
 
-    # def to_dict(self):
-    #     return
-
 
 class Participant(models.Model):
     openid = models.CharField(max_length=128, unique=True)
-    session = models.CharField(max_length=255, unique=True)
-    wxapp_session = models.CharField(max_length=255, unique=True)
     nickname = models.CharField(max_length=56, default='')
     avatarurl = models.CharField(max_length=128, default='')
     rename = models.CharField(max_length=56, default='', blank=True, null=True)

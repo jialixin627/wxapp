@@ -75,59 +75,41 @@ class Auth():
             )
             token = self.encode_auth_token(initiator.openid, initiator.login_time)
             return HttpResponse(json.dumps({'token': token}), content_type="application/json")
-            # return jsonify(common.falseReturn('', '找不到用户'))
         else:
-            # if (Initiator.check_password(Users, userInfo.password, password)):
             login_time = int(decrypt['watermark']['timestamp'])
             initiator.login_time = login_time
             initiator.save()
             token = self.encode_auth_token(initiator.openid, login_time)
             return HttpResponse(json.dumps({'token': token}), content_type="application/json")
-            # return jsonify(common.trueReturn(token.decode(), '登录成功'))
-            # else:
-            #     return jsonify(common.falseReturn('', '密码不正确'))
 
     def identify(self, request):
         """
         用户鉴权
         :param request
-        :return: list
+        :return: json or None
         """
-        auth_header = request.META.get('HTTP_AUTHORIZATION')
-        if auth_header:
+        auth_token = request.META.get('HTTP_AUTHORIZATION').split(" ")[-1]
+        if auth_token:
             payload = self.decode_auth_token(auth_token)
-            initiator = Initiator.object.filter(opneid=payload['data']['opneid']).first()
+            openid = payload['data']['openid']
+            initiator = Initiator.objects.filter(openid=openid).first()
             if initiator:
                 if initiator.login_time == payload['data']['login_time']:
-                    openid = payload['data']['openid']
-                    # return HttpResponse(json.dumps({'token': token}), content_type="application/json")
-                    # result = common.trueReturn(user.id, '请求成功')
+                        request.openid = openid
+                        return
+                else:
+                    return json.dumps({'status': 'Token已更改，请重新登录获取', 'resNo': 400 })
             else:
-                result = common.falseReturn('', 'Token已更改，请重新登录获取')
-            # else:
-            #     result = common.falseReturn('', '找不到该用户信息')
+                return json.dumps({'status': '验证不通过，请重新登录获取', 'resNo': 400 })
+
 
 auth = Auth()
 
-def marshal(data, is_login):
-    # schemas = [field() for field in fields]
-    if isinstance(data, dict) and is_login:
-        # return [marshal(d, fields) for d in data]
-        # return HttpResponse(json.dumps({'a': 2}), content_type="application/json")
-        return auth.authenticate(data)
-    elif isinstance(data, str):
-        return auth.identify(data)
-    else:
-        pass
-
-    # type = data.get('type')
-    # for schema in schemas:
-    #     if type in schema.__class__.__name__.lower():
-    #         result, errors = schema.dump(data)
-    #         if errors:
-    #             for item in errors.items():
-    #                 print('{}: {}'.format(*item))
-    #         return result
+# def marshal(data, is_login):
+#     if isinstance(data, dict) and is_login:
+#         return auth.authenticate(data)
+#     elif isinstance(data, str):
+#         return auth.identify(data)
 
 
 class marshal_with(object):
@@ -139,32 +121,14 @@ class marshal_with(object):
     def __call__(self, f):
         @wraps(f)
         def wrapper(request ,*args, **kwargs):
-            resp = f(request, *args, **kwargs)
-            return marshal(resp, self.is_login)
+            # resp = f(request, *args, **kwargs)
+            # return marshal(resp, self.is_login)
+            if self.is_login:
+                resp = f(request, *args, **kwargs)
+                return auth.authenticate(resp)
+            else:
+                result = auth.identify(request)
+                if result:
+                    return HttpResponse(result, content_type="application/json")
+                return f(request, *args, **kwargs)
         return wrapper
-
-
-
-
-
-        # if auth_header:
-        #     auth_tokenArr = auth_header.split(" ")
-        #     if (not auth_tokenArr or auth_tokenArr[0] != 'JWT' or len(auth_tokenArr) != 2):
-        #         result = common.falseReturn('', '请传递正确的验证头信息')
-        #     else:
-        #         auth_token = auth_tokenArr[1]
-        #         payload = self.decode_auth_token(auth_token)
-        #         if not isinstance(payload, str):
-        #             user = Users.get(Users, payload['data']['id'])
-        #             if (user is None):
-        #                 result = common.falseReturn('', '找不到该用户信息')
-        #             else:
-        #                 if (user.login_time == payload['data']['login_time']):
-        #                     result = common.trueReturn(user.id, '请求成功')
-        #                 else:
-        #                     result = common.falseReturn('', 'Token已更改，请重新登录获取')
-        #         else:
-        #             result = common.falseReturn('', payload)
-        # else:
-        #     result = common.falseReturn('', '没有提供认证token')
-        # return result

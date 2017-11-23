@@ -7,7 +7,6 @@ Page({
   onLoad: function (data) {
     var self = this;
     console.log(data);
-    var data = {'pk': 2};
     api.getVoteInfo({
       data,
       success(res) {

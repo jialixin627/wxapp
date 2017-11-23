@@ -9,6 +9,7 @@ Page({
     url: 'detail/detail',
     weui_icon: '/images/common/weui.png',
     vote_list:{},
+    join_list: {},
     tabs: ["我创建的", "我参与的"],
     activeIndex: 0,
     sliderOffset: 0,
@@ -27,17 +28,13 @@ Page({
 
     api.getVoteList({
       success(res) {
-        console.log('test------')
-        console.log(res.data)
         self.setData({ vote_list: res.data })
+        self.join()
       },
       fail() {
         console.log("获取列表失败！")
       }
     })
-  },
-  onReady: function(){
-
   },
   onShow: function() {
   },
@@ -53,5 +50,14 @@ Page({
       sliderOffset: e.currentTarget.offsetLeft,
       activeIndex: e.currentTarget.id
     });
+  },
+  join(){
+    const self = this;
+    api.join({
+      success(res){
+        console.log('加载成功！')
+        self.setData({ join_list: res.data })
+      }
+    })
   }
 })

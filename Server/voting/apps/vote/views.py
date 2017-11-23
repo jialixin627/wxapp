@@ -79,70 +79,30 @@ def login(request):
 
         return wxapp.decrypt()
 
-# @csrf_exempt
-# def login(request):
-#     if request.method == "POST":
-#         code = request.POST.get('code', '')
-#         nickname = request.POST.get('nickname', '')
-#         avatarurl = request.POST.get('avatarUrl', '')
-#         status, openid, session = get_session_key(code)
-#         if status:
-#             wxapp_session = ''.join(random.sample(initial_code*2, 64))
-#             # cache.add(wxapp_session, openid, 2*60*60)
-#             initiator = Initiator.objects.filter(openid=openid)
-
-#             if initiator.exists():
-#                 initiator = initiator.first()
-#                 initiator.openid = openid
-#                 initiator.wxapp_session = wxapp_session
-#                 initiator.session = session
-#                 initiator.nickname = nickname
-#                 initiator.avatarurl = avatarurl
-#                 initiator.save()
-#             else:
-#                 Initiator.objects.create(openid=openid, wxapp_session=wxapp_session, session=session, nickname=nickname, avatarurl=avatarurl)
-
-#             data = json.dumps({'wxapp_session': wxapp_session, 'status': '登陆成功！'})
-
-#             return HttpResponse(data, content_type="application/json")
-            # else:
-            #     encryptedData = request.POST.get('encryptedData', '')
-            #     iv = request.POST.get('iv', '')
-            #     sessionKey = session
-
-    #             WeUser(openid=openid, wxapp_session=wxapp_session, session=session).save()
-    #         data = json.dumps({'wxapp_session': wxapp_session, 'status': '登陆成功！'})
-    #         return HttpResponse(data, content_type="application/json")
-
-    #     return HttpResponse({'status': '登陆失败！'}, content_type="application/json")
-    # else:
-    #     wxapp_session = request.GET.get('wxapp_session', '')
-    #     return HttpResponse({'status': '登陆成功！'}, content_type="application/json")
 
 @csrf_exempt
 @marshal_with(is_login=False)
 def vote_list(request):
-    return Subject.objects.all()
-    openid = 'oKnMg0TSolZySEy1bbg9jq1ct6UU'
-    initiators = Initiator.objects.filter(openid=openid)
-    participants = Participant.objects.filter(openid=openid)
+    initiators = Initiator.objects.filter(openid=request.openid)
     initiator = initiators.first()
-    i_subjects = Subject.objects.filter(initiator=initiator)
-    i_data = [ s.get_subject_info() for s in i_subjects ]
+    subjects = Subject.objects.filter(initiator=initiator)
+    data = [ s.get_subject_info() for s in subjects ]
 
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
-    participant = participants.first()
-    choices = Choice.objects.filter(participant=participant)
-    p_subjects = Subject.objects.filter(choice__in=choices)
-
-    p_data = [ s.get_subject_info() for s in p_subjects ]
-
-    data = {'i': i_data, 'p': p_data}
-    data = json.dumps(data)
-
-    return HttpResponse(data, content_type="application/json")
 
 @csrf_exempt
+@marshal_with(is_login=False)
+def vote_list_join(request):
+    participant = Participant.objects.filter(openid=request.openid).first()
+    choices = Choice.objects.filter(participant=participant)
+    subjects = Subject.objects.filter(choice__in=choices)
+    data = [ s.get_subject_info() for s in subjects ]
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@csrf_exempt
+@marshal_with(is_login=False)
 def result(request):
     pk = request.POST.get('pk', '')
     subject = Subject.objects.get(pk=pk)
@@ -158,25 +118,27 @@ def get_vote_info(request):
     data = json.dumps(data)
     return HttpResponse(data, content_type="application/json")
 
-
+## 没有登陆过直接进入投票页面的没考虑在内，需要增加
 @csrf_exempt
+@marshal_with(is_login=False)
 def vote_submit(request):
     pk = request.POST.get('pk', '')
     choice = Choice.objects.get(pk=pk)
+    participant = Participant.objects.get(openid=request.openid)
+    participant.choice = choice
     choice.votes += 1
     choice.save()
+    participant.save()
     data = json.dumps({'status': 200, 'pk': choice.subject.pk})
     return HttpResponse(data, content_type="application/json")
 
 
 @csrf_exempt
+@marshal_with(is_login=False)
 def create(request):
-    # import ipdb; ipdb.set_trace()
     subject_form = SubjectForm()
     choice_formset = ChioceFormSet()
-    wxapp_session = request.META.get('HTTP_SESSION')
-    openid = cache.get(wxapp_session)
-    initiator = Initiator.objects.get(openid=openid)
+    initiator = Initiator.objects.get(openid=request.openid)
 
     if request.method == 'POST':
         data = request.POST.dict()

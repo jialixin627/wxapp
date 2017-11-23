@@ -38,6 +38,9 @@ const create = (params) => {
 const getVoteList = (params) => {
   wxRequest(params, `${apiURL}/vote-list/`);
 };
+const join = (params) => {
+  wxRequest(params, `${apiURL}/join/`);
+};
 const voteSubmit = (params) => {
   wxRequest(params, `${apiURL}/vote-submit/`);
 };
@@ -53,6 +56,7 @@ const getResult = (params) => {
 
 
 module.exports = {
+  join,
   signIn,
   create,
   getResult,

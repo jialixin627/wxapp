@@ -6,7 +6,7 @@
 			<text class="app-name">投票系统</text>
 		</view>
 		<view class="alert">
-			<view class="alert-title">网页由该小程序开发，请确认授权以下信息</view>
+			<view class="alert-title">该小程序由贾利欣开发，请确认授权以下信息</view>
 			<view class="alert-desc">
 				<view class="alert-text">获得你的公开信息（昵称、头像等）</view>
 			</view>

@@ -4,8 +4,7 @@
     "pages/index/index",
     "pages/create/create",
     "pages/detail/detail",
-    "pages/vote/vote",
-    "pages/publish/publish"
+    "pages/vote/vote"
   ],
   "window": {
     "backgroundTextStyle": "light",

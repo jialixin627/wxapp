@@ -11,4 +11,5 @@ urlpatterns = patterns('voting.apps.vote.views',
     url(r'^get-vote-info/$', 'get_vote_info', name='get-vote-info'),
     url(r'^vote-submit/$', 'vote_submit', name='vote-submit'),
     url(r'^create/$', 'create', name='create'),
+    url(r'^join/$', 'vote_list_join', name='join'),
 )
