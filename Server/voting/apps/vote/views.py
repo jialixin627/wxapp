@@ -59,7 +59,7 @@ def vote_page(request, id):
 
     return render(request, 'vote/vote_page.html', {'subject': subject, 'vote_form': vote_form})
 
-
+@csrf_exempt
 @authentication(is_login=True)
 def login(request):
     if request.method == "POST":
@@ -70,7 +70,7 @@ def login(request):
 
         return wxapp.decrypt()
 
-
+@csrf_exempt
 @authentication(is_login=False)
 def signin(request):
     return JsonResponse({'status': 200})
@@ -86,7 +86,7 @@ def vote_list(request):
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 
-
+@csrf_exempt
 @authentication(is_login=False)
 def vote_list_join(request):
     participant = Participant.objects.filter(openid=request.openid).first()
@@ -96,7 +96,7 @@ def vote_list_join(request):
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 
-
+@csrf_exempt
 @authentication(is_login=False)
 def get_vote_info(request):
     pk = request.POST.get('pk', '')
@@ -111,6 +111,7 @@ def get_vote_info(request):
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 ## 没有登陆过直接进入投票页面的没考虑在内，需要增加
+@csrf_exempt
 @authentication(is_login=False)
 def vote_submit(request):
     p, created = Participant.objects.update_or_create(
@@ -126,7 +127,7 @@ def vote_submit(request):
     data = json.dumps({'status': 200, 'pk': choice.subject.pk})
     return HttpResponse(data, content_type="application/json")
 
-
+@csrf_exempt
 @authentication(is_login=False)
 def create(request):
     subject_form = SubjectForm()
