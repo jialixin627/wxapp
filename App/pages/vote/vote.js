@@ -2,21 +2,28 @@ const api = require("../../utils/api.js");
 const app = getApp()
 Page({
   data: {
-    disabled: true
+    disabled: true,
   },
   voteInfo: {},
   radioItems: [],
-  onLoad: function (data) {
-    var self = this;
+  onLoad (data) {
+    let self = this;
+    debugger;
     console.log(data);
     api.getVoteInfo({
       data,
       success(res) {
         console.log(res.data)
-        self.setData({ 
-          voteInfo: res.data,
-          radioItems: res.data.choices_data
-        })
+        if (res.data.resNo == 400){
+          wx.navigateTo({
+            url: `../login/login?pk=${data.pk}`
+          })
+        } else{
+          self.setData({
+            voteInfo: res.data,
+            radioItems: res.data.choices_data
+          })
+        }
       }
     })
   },

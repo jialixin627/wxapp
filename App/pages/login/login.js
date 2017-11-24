@@ -3,23 +3,32 @@ const app = getApp();
 Page({
   data: {
     logged: !1,
+    index: '',
     iv: '',
     encryptedData: '',
     logo: '/images/common/logo.jpg',
     weixin_logo: '/images/common/weixin.png'
   },
-  onLoad() {},
-  onShow() {
+  onLoad(query) {
+    console.log()
     const token = wx.getStorageSync('token')
     this.setData({
-      logged: token
+      logged: token,
+      pk: query.pk
     })
     token && setTimeout(this.signIn, 1000)
   },
   goIndex() {
-    wx.switchTab({
-      url: '/pages/index/index'
-    })
+    let self = this;
+    if (self.data.pk) {
+      wx.redirectTo({
+        url: `../vote/vote?pk=${self.data.pk}`
+      })
+    } else {
+      wx.switchTab({
+        url: '/pages/index/index'
+      })
+    }
   },
   login() {
     const that = this;

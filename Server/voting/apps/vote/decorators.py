@@ -65,8 +65,15 @@ class Auth():
         openid = decrypt.get('openId', '')
         initiator = Initiator.objects.filter(openid=openid).first()
 
-        if not initiator:
-            Initiator.objects.create(
+        if initiator:
+            login_time = int(decrypt['watermark']['timestamp'])
+            initiator.login_time = login_time
+            initiator.nickname = decrypt.get('nickName')
+            initiator.save()
+            token = self.encode_auth_token(initiator.openid, login_time)
+            return HttpResponse(json.dumps({'token': token}), content_type="application/json")
+        else:
+            initiator = Initiator.objects.create(
                 openid=openid,
                 nickname=decrypt.get('nickName'),
                 avatarurl=decrypt.get('avatarUrl'),
@@ -74,12 +81,7 @@ class Auth():
             )
             token = self.encode_auth_token(initiator.openid, initiator.login_time)
             return HttpResponse(json.dumps({'token': token}), content_type="application/json")
-        else:
-            login_time = int(decrypt['watermark']['timestamp'])
-            initiator.login_time = login_time
-            initiator.save()
-            token = self.encode_auth_token(initiator.openid, login_time)
-            return HttpResponse(json.dumps({'token': token}), content_type="application/json")
+
 
     def identify(self, request):
         """
@@ -87,8 +89,7 @@ class Auth():
         :param request
         :return: json or None
         """
-        # import ipdb; ipdb.set_trace()
-        auth_token = request.META.get('HTTP_AUTHORIZATION').split(" ")[-1]
+        auth_token = request.META.get('HTTP_AUTHORIZATION')
         if auth_token:
             payload = self.decode_auth_token(auth_token)
             openid = payload['data']['openid']

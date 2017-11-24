@@ -5,7 +5,7 @@ const setHeaders = () => {
   return {
     // 'Accept': 'application/json', 
     'Content-Type': 'application/x-www-form-urlencoded', 
-    'Authorization': `JWT ${wx.getStorageSync('token')}`,
+    'Authorization': wx.getStorageSync('token'),
   }
 }
 
