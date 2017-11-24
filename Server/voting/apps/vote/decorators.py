@@ -1,12 +1,11 @@
 #coding:utf8
-import jwt, datetime, time
-# from app.users.model import Users
+import jwt, json, datetime, time
 from functools import wraps
 from django.utils import timezone
 from django.conf import settings
 from .models import Initiator, Participant
-import json
 from django.http import HttpResponse
+from django.utils.decorators import available_attrs
 
 
 class Auth():
@@ -96,7 +95,7 @@ class Auth():
             if initiator:
                 if initiator.login_time == payload['data']['login_time']:
                         request.openid = openid
-                        return
+                        return None
                 else:
                     return json.dumps({'status': 'Token已更改，请重新登录获取', 'resNo': 400 })
             else:
@@ -104,12 +103,6 @@ class Auth():
 
 
 auth = Auth()
-
-# def marshal(data, is_login):
-#     if isinstance(data, dict) and is_login:
-#         return auth.authenticate(data)
-#     elif isinstance(data, str):
-#         return auth.identify(data)
 
 
 class marshal_with(object):
@@ -119,10 +112,8 @@ class marshal_with(object):
         self.is_login = is_login
 
     def __call__(self, f):
-        @wraps(f)
+        @wraps(f, assigned=available_attrs(f))
         def wrapper(request ,*args, **kwargs):
-            # resp = f(request, *args, **kwargs)
-            # return marshal(resp, self.is_login)
             if self.is_login:
                 resp = f(request, *args, **kwargs)
                 return auth.authenticate(resp)
@@ -130,5 +121,5 @@ class marshal_with(object):
                 result = auth.identify(request)
                 if result:
                     return HttpResponse(result, content_type="application/json")
-                return f(request, *args, **kwargs)
+            return f(request, *args, **kwargs)
         return wrapper

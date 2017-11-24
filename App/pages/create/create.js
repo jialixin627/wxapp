@@ -111,16 +111,16 @@ Page({
       })
   },
   formSubmit: function (e) {
-    console.log(`submit，data：${e.detail.value}`)
-    debugger;
-    var formData = e.detail.value;
+    console.log(`submit data：${e.detail.value}`)
+    const data = e.detail.value;
+    console.log('submit data: ', data)
     api.create({
-      formData,
+      data,
       success: function (res) {
         console.log(res)
         if (res.data.status == 200) {
-          wx.redirectTo({
-            url: `../publish/publish?pk=${res.data.pk}`,
+          wx.navigateTo({
+            url: `../vote/vote?pk=${res.data.pk}`,
           })
         }
       }

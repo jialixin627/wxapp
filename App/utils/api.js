@@ -1,5 +1,5 @@
-// const apiURL = "http://192.168.2.79:5000";
-const apiURL = "http://192.168.31.109:5000";
+const apiURL = "http://192.168.2.79:5000";
+// const apiURL = "http://192.168.31.109:5000";
 const token = wx.getStorageSync('token');
 
 const wxRequest = (params, url) => {
@@ -29,8 +29,11 @@ const wxRequest = (params, url) => {
   });
 };
 
-const signIn = (params) => {
+const login = (params) => {
   wxRequest(params, `${apiURL}/login/`);
+};
+const signIn = (params) => {
+  wxRequest(params, `${apiURL}/signin/`);
 };
 const create = (params) => {
   wxRequest(params, `${apiURL}/create/`);
@@ -57,6 +60,7 @@ const getResult = (params) => {
 
 module.exports = {
   join,
+  login,
   signIn,
   create,
   getResult,

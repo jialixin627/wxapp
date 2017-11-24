@@ -5,7 +5,6 @@ from Crypto.Cipher import AES
 
 
 # -*- coding: utf-8 -*-
-import os
 import base64
 import json
 import requests

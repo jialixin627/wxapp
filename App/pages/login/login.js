@@ -14,18 +14,14 @@ Page({
     this.setData({
       logged: token
     })
-    token && setTimeout(this.goIndex, 1000)
-  },
-  login() {
-    console.log('a')
-    this.signIn(this.goIndex)
+    token && setTimeout(this.signIn, 1000)
   },
   goIndex() {
     wx.switchTab({
       url: '/pages/index/index'
     })
   },
-  signIn() {
+  login() {
     let that =this;
     if (wx.getStorageSync('token')) return
     wx.login({
@@ -43,18 +39,32 @@ Page({
                 encryptedData: that.data.encryptedData
               }
               console.log(data)
-              api.signIn({
+              api.login({
                 data,
                 success(res) {
-                  console.log('登陆成功！')
+                  console.log('登陆成功！', res)
                   wx.setStorageSync('token', res.data.token)
+                  that.goIndex()
                 }
               })
-            }, 1000)
+            }, 1500)
           }
         });
       }
     })
-    that.goIndex()
   },
+  signIn(){
+    const self = this;
+    api.signIn({
+      success(res){
+        if (res.data.resNo == 400){
+          console.log(res.data.status)
+          wx.removeStorageSync('token')
+          self.login(self.goIndex)
+        } else {
+          self.goIndex()
+        }
+      }
+    })
+  }
 })

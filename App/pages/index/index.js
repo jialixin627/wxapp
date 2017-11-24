@@ -36,13 +36,11 @@ Page({
       }
     })
   },
-  onShow: function() {
-  },
   redirectTo(e) {
     console.log(e)
     var pk = e.currentTarget.dataset.pk;
     wx.navigateTo({
-      url: "../detail/detail?pk=" + pk,
+      url: `../detail/detail?pk=${pk}`,
     })
   },
   tabClick(e) {

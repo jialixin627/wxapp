@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-import string
 import random
 import requests
 from django.shortcuts import render, get_object_or_404
@@ -13,15 +12,11 @@ from django.core.cache import cache
 from .WXApp import WXApp
 from django.core import serializers
 from .utils import format_datetime
+from .decorators import marshal_with
 
 # Create your views here.
 
-APPID = 'wxac49926a7c15760c'
-SECRET = '80d419fdcb020d9fe4bfcfa0b70ab9c2'
-initial_code = string.ascii_letters + '1234567890'
-url = 'https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={code}&grant_type=authorization_code'
 
-@csrf_exempt
 def index(request):
     subject_form = SubjectForm()
     choice_formset = ChioceFormSet()
@@ -65,9 +60,6 @@ def vote_page(request, id):
     return render(request, 'vote/vote_page.html', {'subject': subject, 'vote_form': vote_form})
 
 
-from .decorators import marshal_with
-
-
 @csrf_exempt
 @marshal_with(is_login=True)
 def login(request):
@@ -78,6 +70,11 @@ def login(request):
         wxapp = WXApp(code, encryptedData, iv)
 
         return wxapp.decrypt()
+
+@csrf_exempt
+@marshal_with(is_login=False)
+def signin(request):
+    return JsonResponse({'status': 200})
 
 
 @csrf_exempt
@@ -96,7 +93,7 @@ def vote_list(request):
 def vote_list_join(request):
     participant = Participant.objects.filter(openid=request.openid).first()
     choices = Choice.objects.filter(participant=participant)
-    subjects = Subject.objects.filter(choice__in=choices)
+    subjects = Subject.objects.filter(choice__in=choices).distinct()
     data = [ s.get_subject_info() for s in subjects ]
 
     return HttpResponse(json.dumps(data), content_type="application/json")
@@ -122,13 +119,16 @@ def get_vote_info(request):
 @csrf_exempt
 @marshal_with(is_login=False)
 def vote_submit(request):
+    p, created = Participant.objects.update_or_create(
+            openid=request.openid,
+            defaults=Initiator.get_field_kv(request.openid)
+        )
     pk = request.POST.get('pk', '')
     choice = Choice.objects.get(pk=pk)
-    participant = Participant.objects.get(openid=request.openid)
-    participant.choice = choice
     choice.votes += 1
+    choice.participant_set.add(p)
     choice.save()
-    participant.save()
+
     data = json.dumps({'status': 200, 'pk': choice.subject.pk})
     return HttpResponse(data, content_type="application/json")
 
@@ -142,7 +142,6 @@ def create(request):
 
     if request.method == 'POST':
         data = request.POST.dict()
-        wxapp_session = data.pop('wxapp_session', '')
         deadline_date = data.pop('deadline_date', '')
         deadline_time = data.pop('deadline_time', '')
         deadline = deadline_date + ' ' + deadline_time
@@ -150,6 +149,7 @@ def create(request):
 
         subject_form = SubjectForm(data)
         choice_formset = ChioceFormSet(data)
+        # import ipdb; ipdb.set_trace()
 
         if subject_form.is_valid() and choice_formset.is_valid():
             subject = subject_form.save(commit=False)

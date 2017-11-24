@@ -29,15 +29,15 @@
                 </view>
                 <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
                     <view class="weui-panel">
-                        <block wx:for="{{join_list}}">
-                        <view class="weui-panel__bd" bindtap='redirectTo' data-pk='{{item.pk}}'>
+                        <block wx:for="{{join_list}}"  wx:for-item="subject">
+                        <view class="weui-panel__bd" bindtap='redirectTo' data-pk='{{subject.pk}}'>
                             <view class="weui-media-box weui-media-box_text">
-                                <view class="weui-media-box__title weui-media-box__title_in-text">{{item.question}}</view>
-                                <view class="weui-media-box__desc">{{item.subtitle}}</view>
+                                <view class="weui-media-box__title weui-media-box__title_in-text">{{subject.question}}</view>
+                                <view class="weui-media-box__desc">{{subject.subtitle}}</view>
                                 <view class="weui-media-box__info">
-                                    <view class="weui-media-box__info__meta">{{item.nickname}}</view> 
-                                    <view class="weui-media-box__info__meta">截至时间：{{item.deadline}}</view>
-                                    <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">发起人：{{item.name}}</view>
+                                    <view class="weui-media-box__info__meta">{{subject.nickname}}</view> 
+                                    <view class="weui-media-box__info__meta">截至时间：{{subject.deadline}}</view>
+                                    <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">发起人：{{subject.name}}</view>
                                 </view>
                             </view>
                         </view>

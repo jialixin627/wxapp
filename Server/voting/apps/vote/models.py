@@ -19,6 +19,17 @@ class Initiator(models.Model):
     def __unicode__(self):
         return self.rename or self.nickname
 
+    @classmethod
+    def get_field_kv(cls, openid):
+        s = cls.objects.get(openid=openid)
+        data = {
+            'openid': s.openid,
+            'nickname': s.nickname,
+            'avatarurl': s.avatarurl,
+            'rename': s.rename
+        }
+        return data
+
 
 class Subject(models.Model):
     question = models.CharField('投票标题', max_length=255)
@@ -49,10 +60,10 @@ class Subject(models.Model):
         choices = self.choice_set.all()
         choice_list = [
             {
-                'votes': choice.votes,
-                'choice_text': choice.choice_text,
                 'pk': choice.pk,
                 'subject_pk': self.pk,
+                'votes': choice.votes,
+                'choice_text': choice.choice_text,
                 'proportion': '{:.2f}'.format(float(choice.votes*100)/self.total_votes()) if choice.votes else 0
             }
             for choice in choices
