@@ -22,7 +22,7 @@ Page({
     })
   },
   login() {
-    let that =this;
+    const that = this;
     if (wx.getStorageSync('token')) return
     wx.login({
       success(res){
@@ -42,12 +42,12 @@ Page({
               api.login({
                 data,
                 success(res) {
-                  console.log('登陆成功！', res)
+                  // console.log('登陆成功！', res)
                   wx.setStorageSync('token', res.data.token)
                   that.goIndex()
                 }
               })
-            }, 1500)
+            }, 1000)
           }
         });
       }

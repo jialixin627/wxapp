@@ -11,7 +11,7 @@ Page({
   },
   onLoad: function (data) {
     const self = this;
-    api.getResult({
+    api.getVoteInfo({
       data,
       success (res) {
         console.log(res.data)

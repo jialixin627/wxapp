@@ -28,6 +28,7 @@ Page({
 
     api.getVoteList({
       success(res) {
+        console.log(res)
         self.setData({ vote_list: res.data })
         self.join()
       },

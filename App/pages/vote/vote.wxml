@@ -6,19 +6,42 @@
     <form bindsubmit="formSubmit">
       <view class="page__bd"> 
           <view class="weui-cells weui-cells_after-title">
-              <radio-group bindchange="radioChange">
-                  <label class="weui-cell weui-check__label" wx:for="{{radioItems}}">
-                      <radio class="weui-check" value="{{item.pk}}" checked="{{item.checked}}"></radio>
-                      <view class="weui-cell__bd">{{item.choice_text}}</view>
-                      <view class="weui-cell__ft weui-cell__ft_in-radio" wx:if="{{item.checked}}">
-                          <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
-                          <input class='hide' name='pk' value='{{item.pk}}' />
+            <view wx:if="{{voteInfo.voted}}">
+              <view class="weui-panel weui-panel_access" style="padding-bottom:20px;" wx:for="{{radioItems}}">
+                  <view class="weui-form-preview__bd">
+                    <view class="weui-form-preview__item">
+                        <view class="weui-form-preview__label">{{item.choice_text}}({{item.votes}}票)</view>
+                        <view class="weui-form-preview__value">{{item.proportion}}%</view>
+                    </view>
+                  </view>
+                  <view class="weui-panel__bd">
+                        <view class="weui-progress">
+                          <view class="weui-progress__bar">
+                              <progress percent="{{item.proportion}}" stroke-width="5" />
+                          </view>
                       </view>
+                  </view>
+              </view>
+            </view>
+            <view wx:else>
+              <radio-group bindchange="radioChange">
+                  <label class="weui-cell weui-check__label" wx:for="{{radioItems}}">        
+                    <radio class="weui-check" value="{{item.pk}}" checked="{{item.checked}}"></radio>
+                    <view class="weui-cell__bd">{{item.choice_text}}</view>
+                    <view class="weui-cell__ft weui-cell__ft_in-radio" wx:if="{{item.checked}}">
+                        <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+                        <input class='hide' name='pk' value='{{item.pk}}' />
+                    </view>
                   </label>
-              </radio-group>              
-          </view> 
-          <view class="weui-btn-area">
-            <button class="weui-btn" type="primary" formType="submit">投票</button>
+              </radio-group>
+            </view>           
+          </view>
+          <view class="weui-btn-area" wx:if="{{voteInfo.voted || voteInfo.is_initiator}}">
+            <view class="weui-cells__tips" wx:if="{{voteInfo.voted}}">你已经投过票了！</view>
+            <button class="weui-btn" type="primary" open-type="share" data-pk='{{result.pk}}' data-title='{{result.question}}'>分享到群里</button>
+          </view>
+          <view class="weui-btn-area" wx:else>
+            <button class="weui-btn" type="primary" formType="submit" disabled='{{disabled}}'>投票</button>
           </view>
       </view>
     </form>

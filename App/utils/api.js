@@ -1,16 +1,20 @@
 const apiURL = "http://192.168.2.79:5000";
 // const apiURL = "http://192.168.31.109:5000";
-const token = wx.getStorageSync('token');
+
+const setHeaders = () => {
+  return {
+    // 'Accept': 'application/json', 
+    'Content-Type': 'application/x-www-form-urlencoded', 
+    'Authorization': `JWT ${wx.getStorageSync('token')}`,
+  }
+}
 
 const wxRequest = (params, url) => {
   wx.request({
     url,
     method: params.method || 'POST',
     data: params.data || {},
-    header: {
-      'Authorization': `JWT ${token}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+    header: setHeaders(),
     success(res) {
       if (params.success) {
         params.success(res);
@@ -47,14 +51,8 @@ const join = (params) => {
 const voteSubmit = (params) => {
   wxRequest(params, `${apiURL}/vote-submit/`);
 };
-// const getVoteInfo = (params) => {
-//   wxRequest({ success: params.success }, `${apiURL}/live/${params.data.id}`);
-// };
 const getVoteInfo = (params) => {
   wxRequest(params, `${apiURL}/get-vote-info/`);
-};
-const getResult = (params) => {
-  wxRequest(params, `${apiURL}/result/`);
 };
 
 
@@ -63,7 +61,6 @@ module.exports = {
   login,
   signIn,
   create,
-  getResult,
   getVoteList,
   voteSubmit,
   getVoteInfo,

@@ -87,6 +87,7 @@ class Auth():
         :param request
         :return: json or None
         """
+        # import ipdb; ipdb.set_trace()
         auth_token = request.META.get('HTTP_AUTHORIZATION').split(" ")[-1]
         if auth_token:
             payload = self.decode_auth_token(auth_token)
@@ -95,17 +96,19 @@ class Auth():
             if initiator:
                 if initiator.login_time == payload['data']['login_time']:
                         request.openid = openid
-                        return None
+                        return
                 else:
                     return json.dumps({'status': 'Token已更改，请重新登录获取', 'resNo': 400 })
             else:
                 return json.dumps({'status': '验证不通过，请重新登录获取', 'resNo': 400 })
+        else:
+            return json.dumps({'status': '没有提供Token，请重新登录获取', 'resNo': 400 })
 
 
 auth = Auth()
 
 
-class marshal_with(object):
+class authentication(object):
     def __init__(self, is_login):
         if not isinstance(is_login, bool):
             is_login = bool(is_login)

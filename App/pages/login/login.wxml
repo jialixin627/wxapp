@@ -1,5 +1,4 @@
 <view class="login-container">
-<view>{{userInfo.data.iv}}</view>
 	<view class="login" wx:if="{{ !logged }}">
 		<view class="app-info">
 			<image class="app-logo" src="{{logo}}" />

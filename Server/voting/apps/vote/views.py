@@ -12,7 +12,7 @@ from django.core.cache import cache
 from .WXApp import WXApp
 from django.core import serializers
 from .utils import format_datetime
-from .decorators import marshal_with
+from .decorators import authentication
 
 # Create your views here.
 
@@ -60,8 +60,7 @@ def vote_page(request, id):
     return render(request, 'vote/vote_page.html', {'subject': subject, 'vote_form': vote_form})
 
 
-@csrf_exempt
-@marshal_with(is_login=True)
+@authentication(is_login=True)
 def login(request):
     if request.method == "POST":
         code = request.POST.get('code', '')
@@ -71,14 +70,14 @@ def login(request):
 
         return wxapp.decrypt()
 
-@csrf_exempt
-@marshal_with(is_login=False)
+
+@authentication(is_login=False)
 def signin(request):
     return JsonResponse({'status': 200})
 
 
 @csrf_exempt
-@marshal_with(is_login=False)
+@authentication(is_login=False)
 def vote_list(request):
     initiators = Initiator.objects.filter(openid=request.openid)
     initiator = initiators.first()
@@ -88,8 +87,7 @@ def vote_list(request):
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
-@csrf_exempt
-@marshal_with(is_login=False)
+@authentication(is_login=False)
 def vote_list_join(request):
     participant = Participant.objects.filter(openid=request.openid).first()
     choices = Choice.objects.filter(participant=participant)
@@ -98,26 +96,22 @@ def vote_list_join(request):
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 
-@csrf_exempt
-@marshal_with(is_login=False)
-def result(request):
-    pk = request.POST.get('pk', '')
-    subject = Subject.objects.get(pk=pk)
-    data = json.dumps(subject.to_dict())
-    return HttpResponse(data, content_type="application/json")
 
-
-@csrf_exempt
+@authentication(is_login=False)
 def get_vote_info(request):
     pk = request.POST.get('pk', '')
     subject = Subject.objects.get(pk=pk)
+    participant = Participant.objects.filter(openid=request.openid)
+    initiator = Initiator.objects.get(openid=request.openid)
+    voted = subject.choice_set.all().filter(participant__in=participant).exists()
+    is_initiator = initiator == subject.initiator
+    print is_initiator
     data = subject.to_dict()
-    data = json.dumps(data)
-    return HttpResponse(data, content_type="application/json")
+    data.update({'voted': voted, 'is_initiator': is_initiator})
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 ## 没有登陆过直接进入投票页面的没考虑在内，需要增加
-@csrf_exempt
-@marshal_with(is_login=False)
+@authentication(is_login=False)
 def vote_submit(request):
     p, created = Participant.objects.update_or_create(
             openid=request.openid,
@@ -133,8 +127,7 @@ def vote_submit(request):
     return HttpResponse(data, content_type="application/json")
 
 
-@csrf_exempt
-@marshal_with(is_login=False)
+@authentication(is_login=False)
 def create(request):
     subject_form = SubjectForm()
     choice_formset = ChioceFormSet()
@@ -149,7 +142,6 @@ def create(request):
 
         subject_form = SubjectForm(data)
         choice_formset = ChioceFormSet(data)
-        # import ipdb; ipdb.set_trace()
 
         if subject_form.is_valid() and choice_formset.is_valid():
             subject = subject_form.save(commit=False)

@@ -37,32 +37,32 @@ Page({
       console.log(111)
   },
   showTopTips: function(){
-    var that = this;
+    const self = this;
     this.setData({
         showTopTips: true
     });
     setTimeout(function(){
-        that.setData({
+        self.setData({
           showTopTips: false
         });
     }, 3000);
   },
-  bindVoteTypeChange: function (e){
+  bindVoteTypeChange (e){
       this.setData({
         voteTypeIndex: e.detail.value
       })
   },
-  bindTimeChange: function (e) {
+  bindTimeChange (e) {
       this.setData({
         time: e.detail.value
       })
   },
-  bindDateChange: function (e) {
+  bindDateChange (e) {
       this.setData({
         date: e.detail.value
       })
   },
-  recordValue: function (e){
+  recordValue (e){
     let _optionList = this.data.optionList;
     let _index = e.target.dataset.index;
     let value = e.detail.value;
@@ -70,7 +70,7 @@ Page({
     this.setData({optionList: _optionList});
 
   },
-  addOption: function (e){
+  addOption (e){
     let _optionList = this.data.optionList;
     _optionList.push({icon: '/images/common/5.png'})
     this.setData({optionList: _optionList});
@@ -82,7 +82,7 @@ Page({
     // 更新投票选项
     this.updateVoteType();
   },
-  delOption: function (e){
+  delOption (e){
       let _index = e.target.dataset.index;
       let _optionList = this.data.optionList;
       _optionList.splice(_index, 1);
@@ -90,13 +90,13 @@ Page({
       // 更新投票选项
       this.updateVoteType();
   },
-  chooseImage: function (e) {
+  chooseImage (e) {
     var that = this;
     wx.chooseImage({
       sizeType: ['original', 'compressed'], 
       sourceType: ['album', 'camera'], 
       count: 1, 
-      success: function (res) {
+      success (res) {
         // 返回选定照片的本地文件路径列表
         that.setData({
           files: that.data.files.concat(res.tempFilePaths)
@@ -104,23 +104,27 @@ Page({
       }
     })
   },
-  previewImage: function(e){
+  previewImage (e) {
       wx.previewImage({
         current: e.currentTarget.id, // 当前显示图片的http链接
         urls: this.data.files // 需要预览的图片http链接列表
       })
   },
-  formSubmit: function (e) {
+  formSubmit (e) {
     console.log(`submit data：${e.detail.value}`)
     const data = e.detail.value;
     console.log('submit data: ', data)
     api.create({
       data,
-      success: function (res) {
+      success (res) {
         console.log(res)
         if (res.data.status == 200) {
           wx.navigateTo({
             url: `../vote/vote?pk=${res.data.pk}`,
+          })
+        } else {
+          wx.navigateTo({
+            url: '../login/login',
           })
         }
       }
