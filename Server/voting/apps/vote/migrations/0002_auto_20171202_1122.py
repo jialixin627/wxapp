@@ -7,12 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vote', '0003_auto_20171122_1755'),
+        ('vote', '0001_initial'),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='initiator',
-            name='session_key',
+        migrations.AlterField(
+            model_name='notice',
+            name='content',
+            field=models.TextField(verbose_name='\u901a\u77e5\u5185\u5bb9'),
         ),
     ]

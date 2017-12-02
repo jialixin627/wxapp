@@ -2,6 +2,11 @@
 import os
 import sys
 
+# defaultencoding = 'utf-8'
+# if sys.getdefaultencoding() != defaultencoding:
+#     reload(sys)
+#     sys.setdefaultencoding(defaultencoding)
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "voting.settings")
     try:

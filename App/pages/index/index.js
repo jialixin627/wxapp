@@ -8,12 +8,14 @@ Page({
   data: {
     url: 'detail/detail',
     weui_icon: '/images/common/weui.png',
-    vote_list:{},
+    notice_list:{},
     join_list: {},
-    tabs: ["我创建的", "我参与的"],
+    tabs: ["通知列表", "预约列表"],
     activeIndex: 0,
     sliderOffset: 0,
-    sliderLeft: 0
+    sliderLeft: 0,
+    touchStartTime: 0,
+    touchStopTime: 0
   },
   onLoad(options) {
     const self = this;
@@ -26,10 +28,10 @@ Page({
       }
     });
 
-    api.getVoteList({
+    api.getNoticeList({
       success(res) {
         console.log(res)
-        self.setData({ vote_list: res.data })
+        self.setData({ notice_list: res.data })
         self.join()
       },
       fail() {
@@ -57,6 +59,14 @@ Page({
         console.log('加载成功！')
         self.setData({ join_list: res.data })
       }
+    })
+  },
+  del (e) {
+    console.log("long tap")
+    wx.showModal({
+      title: '提示',
+      content: '长按事件被触发',
+      showCancel: true
     })
   }
 })

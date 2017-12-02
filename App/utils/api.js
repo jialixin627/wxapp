@@ -1,5 +1,6 @@
-const apiURL = "http://192.168.2.79:5000";
-// const apiURL = "http://192.168.31.109:5000";
+// const apiURL = "http://192.168.2.79:5000";
+const apiURL = "http://192.168.31.109:5000";
+// const apiURL = 'http://101.201.71.126'
 
 const setHeaders = () => {
   return {
@@ -42,8 +43,8 @@ const signIn = (params) => {
 const create = (params) => {
   wxRequest(params, `${apiURL}/create/`);
 };
-const getVoteList = (params) => {
-  wxRequest(params, `${apiURL}/vote-list/`);
+const getNoticeList = (params) => {
+  wxRequest(params, `${apiURL}/notice-list/`);
 };
 const join = (params) => {
   wxRequest(params, `${apiURL}/join/`);
@@ -61,7 +62,7 @@ module.exports = {
   login,
   signIn,
   create,
-  getVoteList,
+  getNoticeList,
   voteSubmit,
   getVoteInfo,
 };

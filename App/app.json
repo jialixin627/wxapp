@@ -12,7 +12,7 @@
     "backgroundColor": "#fff",
     "enablePullDownRefresh": "true",
     "onReachBottomDistance": "30px",
-    "navigationBarTitleText": "投票系统",
+    "navigationBarTitleText": "Aragon 小程序",
     "navigationBarTextStyle": "#fff"
   },
   "tabBar": {

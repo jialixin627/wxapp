@@ -3,14 +3,14 @@ const app = getApp();
 Page({
   data: {
     logged: !1,
-    index: '',
+    pk: !1,
     iv: '',
     encryptedData: '',
     logo: '/images/common/logo.jpg',
     weixin_logo: '/images/common/weixin.png'
   },
   onLoad(query) {
-    console.log()
+    console.log(query.pk)
     const token = wx.getStorageSync('token')
     this.setData({
       logged: token,

@@ -8,7 +8,6 @@ Page({
   radioItems: [],
   onLoad (data) {
     let self = this;
-    debugger;
     console.log(data);
     api.getVoteInfo({
       data,
@@ -27,12 +26,6 @@ Page({
       }
     })
   },
-  /**
-   * 用户点击右上角分享
-   */
-  // onShareAppMessage: function () {
-  
-  // },
   radioChange (e) {
     const self = this;
     console.log('radio发生change事件，携带value值为：', e.detail.value);
